@@ -1,0 +1,8 @@
+[Food] Spagetti
+Spagetti Pasta, 500g
+Clams, 500g
+Garlic, 2ea
+[Food] 제육볶음
+Pork belly, 1kg
+Garlic, 2ea
+
