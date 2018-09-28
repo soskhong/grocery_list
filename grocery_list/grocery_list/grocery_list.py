@@ -1,4 +1,3 @@
-
 # 
 ### ingredients
 # Name
@@ -12,21 +11,55 @@
 # list of shopping item is output of this. 
 
 from FoodIngredientList import *
+from viewTerminal import *
+import os
+
+def clear_screen():
+    os.system('cls')
 
 if __name__ == "__main__":
 
-    ing1 = Ingredient("onion", 1, "ea")
-    ing2 = Ingredient("apple", 2, "ea")
-    ing3 = ShopItem("shampoo", 2, "ea")
-    print(str(ing1))
-    food = FoodIngredientList()
-    food.addIng(ing1)
-    food.addIng(ing2)
-    food.addIng(ing3)
+    done = False
 
-    print(ing1.getFileName())
-    print(ing3.getFileName())
+    shop_list = FoodIngredientList("Shopping List")
 
-    print(food.toString())
+    food_list = []
 
+    jimdak = FoodIngredientList("Braised chicken")
+
+    jimdak.createAndAddIng("whole chicken", 1, "kg")
+    jimdak.createAndAddIng("potato", 2, "ea")
+    jimdak.createAndAddIng("carrot", 1, "ea")
+    jimdak.createAndAddIng("noodle (dangmyun)", 1, "ea")
+    jimdak.createAndAddIng("spring onion", 2, "ea")
+    jimdak.createAndAddIng("garlic", 4, "cloves")
+    jimdak.createAndAddIng("onion", 1, "ea")
+
+    food_list.append(jimdak)
+
+    sooyook = FoodIngredientList("Boiled Port")
+    sooyook.createAndAddIng("pork belly", 600, "g")
+    sooyook.createAndAddIng("apple", 1, "ea")
+    sooyook.createAndAddIng("spring onion", 3, "ea")
+    sooyook.createAndAddIng("onion", 2, "ea")
+
+    food_list.append(sooyook)
+
+    for food in food_list:
+        for ing in food.getIngList():
+            shop_list.addIng(ing)
+
+    #print(shop_list.toString())
+
+    v = terminalIngredientView()
+    v.setFoodList(food_list)
+
+    while(1):
+        v.update()
+
+# user scenario
+
+###
+
+###
 

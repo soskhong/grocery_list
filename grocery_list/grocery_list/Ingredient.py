@@ -11,3 +11,20 @@ class Ingredient(IngredientBase, object):
         self.setAmount(amount)
         self.setUnit(unit)
 
+        
+    def createFromString(desc):
+        d = desc.replace(" ","")
+        l = d.split(",")
+        name = l[0];
+        pos = re.search(r"[A-Z,a-z]", l[1])
+        idx = pos.regs[0][0]
+        amount = int(l[1][0:idx])
+        unit = l[1][idx:]
+        return Ingredient(name, amount, unit)
+        
+
+
+if __name__ == "__main__":
+
+    Ingredient.createFromString("pork, 1234kg")
+    

@@ -4,8 +4,10 @@ from Ingredient import *
 
 class FoodIngredientList(object):
 
-    def __init__(self):
+    def __init__(self, name):
         self.ing_list = []
+        self.name = name
+
 
     def isIngExist(self, ing):
         for item in self.ing_list:
@@ -27,11 +29,15 @@ class FoodIngredientList(object):
         else:
             self.ing_list.append(ing)
 
+    def createAndAddIng(self, name, amount, unit):
+        ing = Ingredient(name, amount, unit)
+        self.addIng(ing)
+
     def getIngList(self):
         return self.ing_list
     
     def toString(self):
-        ret = ""
+        ret = "Food: " + self.name + "\n"
         for item in self.ing_list:
             ret += str(item)
             ret += "\n"

@@ -1,0 +1,82 @@
+from FoodIngredientList import *
+from viewTerminal import *
+
+import os
+from abc import *
+
+class controllerBase(metaclass=ABCMeta):
+    def __init__(self, model, view: ingredientViewBase):
+        self.v = view
+        self.m = model
+
+    def isFoodAlreadyExist(self, added):
+        for food in self.m:
+            if food.name == added:
+                return True
+        return False
+    
+    def getExistingFood(self, name):
+        for food in self.m:
+            if food.name == name:
+                return food
+
+
+    @abstractmethod
+    def start(self):
+        pass
+
+    def do(self):
+        next_sig = self.v.getNextSignal()
+
+        if self.v.isInvalidSignal(next_sig):
+                self.v.addWarning("Your input " + str(next_sig) + " is invalid")
+                self.v.setNextSignal(self.v.getSignal())
+        else:
+            if self.v.getSignal() is self.v.USER_SIGNALS["add food"]:
+                added = self.v.getAddedFoodName()
+            
+                if self.isFoodAlreadyExist(added):
+                    self.v.addWarning("The food " + added + " already exists")
+                else:
+                    self.m.append(FoodIngredientList(self.v.getAddedFoodName()))
+                    self.v.setFoodList(self.m)
+            
+                self.v.setNextSignal(self.v.USER_SIGNALS["main page"])      
+            
+            elif self.v.getSignal() is self.v.USER_SIGNALS["modify food"]:
+                modified = self.v.getModifiedFoodName()
+                ings = self.v.getModifiedFoodIngs()
+
+                if self.isFoodAlreadyExist(modified):
+                    f = self.getExistingFood(modified)
+
+                    for i in ings:
+                        f.addIng(Ingredient.createFromString(i))
+                else:
+                    self.v.addWarning("the food has not been added")
+
+                self.v.setNextSignal(self.v.USER_SIGNALS["main page"])
+
+class terminalController(controllerBase):
+
+    def __init__(self, model, view: ingredientViewBase):
+        super(terminalController, self).__init__(model, view)
+
+    def start(self):
+        while(1):
+            self.v.update()
+            next_sig = self.v.getNextSignal()
+            
+            if self.v.isExitSignal(next_sig):
+                exit()
+            
+            self.do()
+            self.v.updateSignal()                       
+
+if __name__ == "__main__":
+
+    v = terminalIngredientView()
+    c = terminalController([], v)
+
+    c.start()
+
