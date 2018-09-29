@@ -22,6 +22,13 @@ class FoodIngredientList(object):
             if item.isSameIng(ing):
                 return item
     
+    def subIng(self, ing):
+        if self.isIngExist(ing):
+            curr = self.findIng(ing)
+            curr.sub(ing)
+            if curr.getAmount() == 0:
+                self.ing_list.remove(curr)
+
     def addIng(self, ing):
         if self.isIngExist(ing):
             curr = self.findIng(ing)

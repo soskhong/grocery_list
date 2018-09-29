@@ -25,6 +25,45 @@ class controllerBase(metaclass=ABCMeta):
     def start(self):
         pass
 
+    def doAddFood(self):
+        added = self.v.getAddedFoodName()
+            
+        if self.isFoodAlreadyExist(added):
+            self.v.addWarning("The food " + added + " already exists")
+        else:
+            self.m.append(FoodIngredientList(self.v.getAddedFoodName()))
+            self.v.setFoodList(self.m)
+            
+        self.v.setNextSignal(self.v.USER_SIGNALS["main page"]) 
+
+
+    def doModifyFood(self):
+        modified = self.v.getModifiedFoodName()
+        add_ings = self.v.getAddedFoodIngs()
+        del_ings = self.v.getRemovedFoodIngs()
+            
+        if self.isFoodAlreadyExist(modified):
+            f = self.getExistingFood(modified)
+            
+            for i in add_ings:
+                f.addIng(Ingredient.createFromString(i))
+            for i in del_ings:
+                f.subIng(Ingredient.createFromString(i))
+        else:
+            self.v.addWarning("the food has not been added")
+            
+        self.v.setNextSignal(self.v.USER_SIGNALS["main page"])
+    
+    def doRemoveFood(self):
+        removed = self.v.getRemovedFoodName()
+
+        if self.isFoodAlreadyExist(removed):
+            self.m.remove(self.getExistingFood(removed))
+            self.v.setFoodList(self.m)
+
+        self.v.setNextSignal(self.v.USER_SIGNALS["main page"])
+
+
     def do(self):
         next_sig = self.v.getNextSignal()
 
@@ -33,29 +72,14 @@ class controllerBase(metaclass=ABCMeta):
                 self.v.setNextSignal(self.v.getSignal())
         else:
             if self.v.getSignal() is self.v.USER_SIGNALS["add food"]:
-                added = self.v.getAddedFoodName()
-            
-                if self.isFoodAlreadyExist(added):
-                    self.v.addWarning("The food " + added + " already exists")
-                else:
-                    self.m.append(FoodIngredientList(self.v.getAddedFoodName()))
-                    self.v.setFoodList(self.m)
-            
-                self.v.setNextSignal(self.v.USER_SIGNALS["main page"])      
+                self.doAddFood();
             
             elif self.v.getSignal() is self.v.USER_SIGNALS["modify food"]:
-                modified = self.v.getModifiedFoodName()
-                ings = self.v.getModifiedFoodIngs()
+                self.doModifyFood();
 
-                if self.isFoodAlreadyExist(modified):
-                    f = self.getExistingFood(modified)
-
-                    for i in ings:
-                        f.addIng(Ingredient.createFromString(i))
-                else:
-                    self.v.addWarning("the food has not been added")
-
-                self.v.setNextSignal(self.v.USER_SIGNALS["main page"])
+            elif self.v.getSignal() is self.v.USER_SIGNALS["del food"]:
+                self.doRemoveFood()
+                
 
 class terminalController(controllerBase):
 

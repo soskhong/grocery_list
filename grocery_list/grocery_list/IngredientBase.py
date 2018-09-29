@@ -70,6 +70,16 @@ class IngredientBase(object):
 
         self.setAmount(self.getAmount() + other.getAmount())
 
+    def sub(self, other):
+        assert self.isSameIng(other)
+        assert self.isSameUnit(other)
+
+        diff = self.getAmount() - other.getAmount()
+        if diff > 0:
+            self.setAmount(diff)
+        else:
+            self.setAmount(0)
+
     def str_info(self):
         ret_str = self.getName() + ", "
         ret_str = ret_str + str(self.getAmount()) + self.getUnit()

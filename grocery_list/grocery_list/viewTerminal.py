@@ -1,14 +1,17 @@
 import os
 from abc import *
+from FoodIngredientList import *
 
 class ingredientViewBase(metaclass=ABCMeta):
 
     USER_SIGNALS = {
         "main page":1,
         "add food":2,
-        "modify food":3,
-        "food info":4,
-        "sum up":5,
+        "del food":3,
+        "modify food":4,
+        "food info":5,
+        "sum up":6,
+        
         }
 
     def __init__(self):
@@ -17,12 +20,19 @@ class ingredientViewBase(metaclass=ABCMeta):
         self.fl = []
         self.addedFoodName = ""
 
+    def addUserDefinedSignal(self,str):
+        self.USER_SIGNALS[str] = max(self.USER_SIGNALS.values()) + 1
+
     @abstractmethod
     def showMain(self):
         pass
 
     @abstractmethod
     def showAddFood(self):
+        pass
+
+    @abstractmethod
+    def showDelFood(self):
         pass
 
     def getAddedFoodName(self):
@@ -68,8 +78,12 @@ class ingredientViewBase(metaclass=ABCMeta):
             return self.showAddFood()
         elif self.getSignal()  is self.USER_SIGNALS["modify food"]:
             return self.showModifyFood()
+        elif self.getSignal() is self.USER_SIGNALS["food info"]:
+            return self.showFoodInfo()
         elif self.getSignal()  is self.USER_SIGNALS["sum up"]:
             return self.showSumUp()
+        elif self.getSignal() is self.USER_SIGNALS["del food"]:
+            return self.showDelFood()
 
     def isValidSig(self, sig):
         return sig in self.USER_SIGNALS.values()
@@ -77,11 +91,17 @@ class ingredientViewBase(metaclass=ABCMeta):
     def isExitSignal(self):
         return False
 
+    def getRemovedFoodName(self):
+        return self.removed_food_name
+
     def getModifiedFoodName(self):
         return self.modified_food_name
 
-    def getModifiedFoodIngs(self):
-        return self.modified_food_ing
+    def getAddedFoodIngs(self):
+        return self.added_food_ing
+
+    def getRemovedFoodIngs(self):
+        return self.removed_food_ing
 
     def setNoFoodRegisteredWarning(self):
         self.addWarning("No food has been added")
@@ -92,8 +112,10 @@ class terminalIngredientView(ingredientViewBase):
 
     def __init__(self):
         super(terminalIngredientView, self).__init__()
-        self.USER_SIGNALS["exit"] = 6
+        self.addUserDefinedSignal("exit");
         self.pw = []
+        self.removed_food_name = ""
+        self.modified_food_name = ""
 
     def isExitSignal(self, sig):
         if sig is self.USER_SIGNALS["exit"]:
@@ -136,14 +158,36 @@ class terminalIngredientView(ingredientViewBase):
         name = input ("Name of food: ")
         self.addedFoodName = name
 
+    def setRemovedFoodName(self, name):
+        self.removed_food_name = name
+    
+    def showDelFood(self):
+        self.clearScreen()
+        if len(self.fl) < 1:
+            self.addWarning("no food has been added")
+            return
+
+        self.showFoodList()
+        food_num = self.getFoodNumber()
+
+        if food_num >= len(self.fl):
+            self.addWarning("wrong food number input")
+            return
+
+        self.setRemovedFoodName(self.fl[food_num].name)
+
     def setModifiedFoodName(self, name):
         self.modified_food_name = name
 
     def getModifiedFoodName(self):
         return self.modified_food_name
 
-    def setModifiedFoodIngs(self, ings):
-        self.modified_food_ing = ings
+    def setAddedFoodIngs(self, ings):
+        self.added_food_ing = ings
+
+    def setRemovedFoodIngs(self, ings):
+        self.removed_food_ing = ings
+
 
     def getModifiedFoodIngs(self):
         return self.modified_food_ing
@@ -158,12 +202,26 @@ class terminalIngredientView(ingredientViewBase):
         food_num = food_num-1
         return food_num
 
-
     def showFoodInfo(self):
         self.clearScreen()
         if len(self.fl) > 0:
             self.showFoodList()
             food_num = self.getFoodNumber()
+
+            if food_num >= len(self.fl):
+                self.addWarning("wrong food number input")
+                return
+
+            self.clearScreen()
+            selected_food = self.fl[food_num]
+
+            print(selected_food.toString())
+
+            next = int(input("want to see another = 1, goto main = 2 :"))
+            if next == 2:
+                self.setNextSignal(self.USER_SIGNALS["main page"])
+            else:
+                self.setNextSignal(self.USER_SIGNALS["food info"])
 
         else:
             self.setNoFoodRegisteredWarning()        
@@ -172,7 +230,8 @@ class terminalIngredientView(ingredientViewBase):
         self.clearScreen()
 
         food_num = 0
-        inputed = []
+        add_inputed = []
+        del_inputed = []
 
         if len(self.fl) > 0:
             self.showFoodList()
@@ -182,23 +241,42 @@ class terminalIngredientView(ingredientViewBase):
                 return
 
             self.clearScreen()
+            print("current ingredients=\n")
+            print(self.fl[food_num].toString())
+            print("\n")
 
             while True:
-                ing = input("name, amount = ")
+                ing = input("{add/del}, name, amount = ")
+
                 ing = ing.replace(" ","")
-            
                 if len(ing) is 0:
                    break
+                
+                ing = ing.split(",",1)
 
-                inputed.append(ing)
+                if ing[0] != "add" and ing[0] != "del":
+                    break
 
+                if ing[0] == "add":
+                    add_inputed.append(ing[1])
+                if ing[0] == "del":
+                    del_inputed.append(ing[1])
+                    
                 self.clearScreen()
 
-                for i in inputed:
-                    print(i)
+                print("current ingredients=\n")
+                print(self.fl[food_num].toString())
+                print("\n")
+
+                for i in add_inputed:
+                    print("ADD: " + i)
+                for i in del_inputed:
+                    print("DEL: " + i)
 
             self.setModifiedFoodName(self.fl[food_num].name)
-            self.setModifiedFoodIngs(inputed)
+            self.setAddedFoodIngs(add_inputed)
+            self.setRemovedFoodIngs(del_inputed)
+
         else:
             self.setNoFoodRegisteredWarning()
         
@@ -206,8 +284,46 @@ class terminalIngredientView(ingredientViewBase):
 
     def showSumUp(self):
         self.clearScreen()
-        print ("showSumUp")
-        self.getNextInput()
+
+        summed_up_list = FoodIngredientList("Shopping List")
+
+        for food in self.fl:
+            for ing in food.getIngList():
+                summed_up_list.addIng(ing)
+
+        while(1):
+
+            self.clearScreen()
+
+            i = 1
+
+            if len(summed_up_list.getIngList()) == 0:
+                print ("Done! bye!")
+                input()
+                exit()
+
+            for ing in summed_up_list.getIngList():
+                print (str(i) + ": " + str(ing))
+                i = i+1
+
+            print ("type shopped,n -> n th item is deleted)")
+            print ("type exit -> exit the program")
+             
+            i = input()
+
+            i = i.replace(" ","")
+            
+            if i == "exit":
+                exit()
+            
+            i = i.split(",")
+
+            num = int(i[1])
+
+            if i[0] != "shopped" or num >= len(summed_up_list.getIngList()):
+                self.addWarning("wrong input")
+            else:
+                summed_up_list.subIng(summed_up_list.getIngList()[num-1])
 
 if __name__ == "__main__":
 
