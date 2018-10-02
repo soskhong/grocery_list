@@ -4,15 +4,10 @@ from Ingredient import *
 
 class FoodIngredientList(object):
 
-    def setName(self, name_):
-        self.name = name_
-
-    def getName(self):
-        return self.name
-
-    def __init__(self):
+    def __init__(self, name):
         self.ing_list = []
-        self.name = "Default Food"
+        self.name = name
+
 
     def isIngExist(self, ing):
         for item in self.ing_list:
@@ -27,6 +22,13 @@ class FoodIngredientList(object):
             if item.isSameIng(ing):
                 return item
     
+    def subIng(self, ing):
+        if self.isIngExist(ing):
+            curr = self.findIng(ing)
+            curr.sub(ing)
+            if curr.getAmount() == 0:
+                self.ing_list.remove(curr)
+
     def addIng(self, ing):
         if self.isIngExist(ing):
             curr = self.findIng(ing)
@@ -34,14 +36,15 @@ class FoodIngredientList(object):
         else:
             self.ing_list.append(ing)
 
+    def createAndAddIng(self, name, amount, unit):
+        ing = Ingredient(name, amount, unit)
+        self.addIng(ing)
+
     def getIngList(self):
         return self.ing_list
     
     def toString(self):
-        ret = ""
-        ret += "Food: "
-        ret += self.getName() + "\n"
-        ret += " == Ingredient ==\n"
+        ret = "Food: " + self.name + "\n"
         for item in self.ing_list:
             ret += str(item)
             ret += "\n"

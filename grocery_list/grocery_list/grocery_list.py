@@ -1,4 +1,3 @@
-
 # 
 ### ingredients
 # Name
@@ -12,16 +11,15 @@
 # list of shopping item is output of this. 
 
 from FoodIngredientList import *
+from viewTerminal import *
+from controller import *
+import os
 
 if __name__ == "__main__":
 
-    ing1 = Ingredient("onion", 1, "ea")
-    ing2 = Ingredient("apple", 2, "ea")
-    #print(str(ing1))
-    food = FoodIngredientList()
-    food.addIng(ing1)
-    food.addIng(ing2)
+    v = webIngredientView()
+    c = webController([], v)
 
-    print(food.toString())
+    c.start()
 
 

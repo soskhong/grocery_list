@@ -1,4 +1,5 @@
 import os
+import re
 
 class IngredientBase(object):
 
@@ -9,12 +10,13 @@ class IngredientBase(object):
         "g",
         "kg",
         "ea",
+        "cloves",
         ]
 
     def __init__(self):
         self.name = ""
         self.amount = 0.0
-        self.unit = ""
+        self.unit = ""        
     
     def getAvailableUnit(self):
         return self.AVAILABLE_UNITS;
@@ -23,10 +25,13 @@ class IngredientBase(object):
         self.name = name_
     def getName(self):
         return self.name
+
     def setAmount(self, amount_):
         self.amount = amount_
+
     def getAmount(self):
         return self.amount;
+
     def setUnit(self, unit_):
         if unit_ in self.AVAILABLE_UNITS:
             self.unit = unit_
@@ -34,6 +39,7 @@ class IngredientBase(object):
         else:
             self.unit = INVALID_UNIT
             return False
+    
     def getUnit(self):
         return self.unit
 
@@ -63,6 +69,16 @@ class IngredientBase(object):
         assert self.isSameUnit(other)
 
         self.setAmount(self.getAmount() + other.getAmount())
+
+    def sub(self, other):
+        assert self.isSameIng(other)
+        assert self.isSameUnit(other)
+
+        diff = self.getAmount() - other.getAmount()
+        if diff > 0:
+            self.setAmount(diff)
+        else:
+            self.setAmount(0)
 
     def str_info(self):
         ret_str = self.getName() + ", "
