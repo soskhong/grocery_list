@@ -17,8 +17,8 @@ import os
 
 if __name__ == "__main__":
 
-    v = terminalIngredientView()
-    c = terminalController([], v)
+    v = webIngredientView()
+    c = webController([], v)
 
     c.start()
 

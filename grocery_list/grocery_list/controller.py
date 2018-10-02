@@ -95,7 +95,14 @@ class terminalController(controllerBase):
                 exit()
             
             self.do()
-            self.v.updateSignal()                       
+            self.v.updateSignal()
+
+class webController(controllerBase):
+    def __init__(self, model, view: webIngredientView):
+        super(webController, self).__init__(model, view)
+
+    def start(self):
+        pass
 
 if __name__ == "__main__":
 

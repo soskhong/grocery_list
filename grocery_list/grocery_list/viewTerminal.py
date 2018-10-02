@@ -108,6 +108,36 @@ class ingredientViewBase(metaclass=ABCMeta):
         self.setSignal(self.USER_SIGNALS["main page"])
         self.setNextSignal(self.USER_SIGNALS["main page"])
 
+class webIngredientView(ingredientViewBase):
+
+    def __init__(self):
+        super(webIngredientView, self).__init__()
+        self.pw = []
+        self.removed_food_name = ""
+        self.modified_food_name = ""
+
+    def showMain(self):
+        pass
+
+    def showAddFood(self):
+        pass
+
+    def showDelFood(self):
+        pass
+
+    def showModifyFood(self):
+        pass
+
+    def showSumUp(self):
+        pass
+
+    def showFoodInfo(self, food):
+        pass
+
+
+
+
+
 class terminalIngredientView(ingredientViewBase):
 
     def __init__(self):
