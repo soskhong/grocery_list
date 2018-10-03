@@ -4,8 +4,10 @@ from viewTerminal import *
 import os
 from abc import *
 
-class controllerBase(metaclass=ABCMeta):
-    def __init__(self, model, view: ingredientViewBase):
+class controllerBase(object):
+
+    __metaclass__ = ABCMeta
+    def __init__(self, model, view):
         self.v = view
         self.m = model
 
@@ -83,7 +85,7 @@ class controllerBase(metaclass=ABCMeta):
 
 class terminalController(controllerBase):
 
-    def __init__(self, model, view: ingredientViewBase):
+    def __init__(self, model, view):
         super(terminalController, self).__init__(model, view)
 
     def start(self):
@@ -98,7 +100,7 @@ class terminalController(controllerBase):
             self.v.updateSignal()
 
 class webController(controllerBase):
-    def __init__(self, model, view: webIngredientView):
+    def __init__(self, model, view):
         super(webController, self).__init__(model, view)
 
     def start(self):

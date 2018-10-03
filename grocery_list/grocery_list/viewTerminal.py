@@ -2,7 +2,9 @@ import os
 from abc import *
 from FoodIngredientList import *
 
-class ingredientViewBase(metaclass=ABCMeta):
+class ingredientViewBase(object):
+
+    __metaclass__ = ABCMeta
 
     USER_SIGNALS = {
         "main page":1,
@@ -163,7 +165,8 @@ class terminalIngredientView(ingredientViewBase):
 
     def getUserSignalString(self):
         ret = ""
-        for sig_name in self.USER_SIGNALS.keys():
+
+        for sig_name in sorted(self.USER_SIGNALS, key=self.USER_SIGNALS.get):
             ret = ret + str(self.USER_SIGNALS[sig_name]) + ": " + sig_name + " "
         return ret
 
