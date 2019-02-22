@@ -155,7 +155,7 @@ class terminalIngredientView(ingredientViewBase):
         return False
 
     def clearScreen(self):
-        os.system('cls');
+        os.system('cls||clear')
         for w in self.pw:
             print ("WARNING: " + w)
         del self.pw[:]       
@@ -328,7 +328,7 @@ class terminalIngredientView(ingredientViewBase):
 
             self.clearScreen()
 
-            i = 1
+            i = 0
 
             if len(summed_up_list.getIngList()) == 0:
                 print ("Done! bye!")
